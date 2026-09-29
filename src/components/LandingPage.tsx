@@ -6,7 +6,8 @@ import stepDetect from '../assets/step-detect.png';
 import stepIdentify from '../assets/step-identify.png';
 import stepReport from '../assets/step-report.png';
 import maritimeEnforcementGap from '../assets/maritime-enforcement-gap.png';
-import waterVideo from '../assets/water-bg.mp4';
+import waterVideo from '../assets/water-bg-lite.mp4';
+import waterPoster from '../assets/water-poster.jpg';
 
 interface LandingPageProps {
   onEnterDashboard: () => void;
@@ -19,9 +20,29 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterDashboard }) =>
   const [revealedCards, setRevealedCards] = useState<number[]>([]);
   const sectionRef = useRef<HTMLElement>(null);
   const endMarkerRef = useRef<HTMLDivElement>(null);
+  const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
   
   const hasAnimatedRef = useRef(false);
   const isAnimatingRef = useRef(false);
+
+  useEffect(() => {
+    const videoObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const vid = entry.target as HTMLVideoElement;
+        if (entry.isIntersecting) {
+          vid.play().catch(() => {});
+        } else {
+          vid.pause();
+        }
+      });
+    }, { threshold: 0, rootMargin: '400px' });
+
+    videoRefs.current.forEach(vid => {
+      if (vid) videoObserver.observe(vid);
+    });
+
+    return () => videoObserver.disconnect();
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 30);
@@ -134,7 +155,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterDashboard }) =>
           {/* Left Branding */}
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 flex items-center justify-center shrink-0">
-              <img src={sagarLogo} alt="SAGAR" className="w-full h-full object-contain drop-shadow" />
+              <img src={sagarLogo} alt="SAGAR" loading="eager" fetchPriority="high" decoding="async" className="w-full h-full object-contain drop-shadow" />
             </div>
             <div className="flex flex-col justify-center gap-0.5">
               <div className="flex items-center gap-2">
@@ -186,6 +207,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterDashboard }) =>
           <img 
             src={heroGraphic} 
             alt="Satellite Detecting Oil Spill At Sea" 
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
             className="w-full h-full object-cover select-none object-center brightness-[0.4]" 
           />
           {/* Bottom Gradient for smooth transition */}
@@ -297,6 +321,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterDashboard }) =>
                       <img 
                         src={step.img} 
                         alt={step.title} 
+                        loading="lazy"
+                        decoding="async"
+                        style={{ aspectRatio: '666 / 1000' }}
                         className="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-[1.03]" 
                       />
                     </div>
@@ -315,16 +342,26 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterDashboard }) =>
 
       {/* PROBLEM VS SOLUTION SECTION */}
       <section id="problem-solution" className="pt-4 lg:pt-8 scroll-mt-16 w-full relative bg-[#fcfdfd] overflow-hidden">
-        
         {/* Main Graphic Layer */}
-        <div className="w-full flex justify-center relative z-10 pb-8">
-          <img 
-            src={maritimeEnforcementGap} 
-            alt="The Maritime Enforcement Void" 
-            className="w-full h-auto max-w-none block object-contain drop-shadow-md relative z-0" 
-          />
-          {/* Fade image into deep maritime blue */}
-          <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-[#0c2340] via-[#0c2340]/90 to-transparent z-10 pointer-events-none"></div>
+        <div className="w-full flex justify-center relative z-10">
+          <div className="relative w-full max-w-none">
+            <img 
+              src={maritimeEnforcementGap} 
+              alt="The Maritime Enforcement Void" 
+              loading="lazy"
+              decoding="async"
+              style={{ aspectRatio: '1000 / 416' }}
+              className="w-full h-auto block object-contain drop-shadow-md relative z-0" 
+            />
+            {/* CLEAN EDGE FADE: Sharp image, only bottom ~22% gently dissolves into next section */}
+            <div 
+              className="absolute bottom-0 left-0 right-0 pointer-events-none z-10"
+              style={{
+                height: '22%',
+                background: 'linear-gradient(to bottom, rgba(12, 35, 64, 0), rgba(12, 35, 64, 0.4), rgba(12, 35, 64, 0.85), #0c2340)'
+              }}
+            ></div>
+          </div>
         </div>
       </section>
 
@@ -340,10 +377,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterDashboard }) =>
         {/* Stage 3 & 4: Flowing water blending in */}
         <div className="absolute inset-0 w-full h-full z-0 overflow-hidden opacity-90">
           <video
-            autoPlay
+            ref={(el) => (videoRefs.current[0] = el)}
             loop
             muted
             playsInline
+            preload="none"
+            poster={waterPoster}
             src={waterVideo}
             className="w-full h-[150%] object-cover -translate-y-[20%] filter brightness-110 contrast-110 saturate-125 mix-blend-screen"
           />
@@ -369,10 +408,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterDashboard }) =>
           <div className="absolute inset-0 bg-[#020617]"></div>
           
           <video
-            autoPlay
+            ref={(el) => (videoRefs.current[1] = el)}
             loop
             muted
             playsInline
+            preload="none"
+            poster={waterPoster}
             src={waterVideo}
             className="absolute inset-0 w-full h-full object-cover opacity-75 scale-105 filter brightness-100 contrast-110 saturate-125 mix-blend-screen"
           />

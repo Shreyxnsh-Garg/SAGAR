@@ -1,15 +1,15 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import sagarLogo from './assets/sagar-logo.png';
-import { TelemetryDrawer } from './components/TelemetryDrawer';
 import { MapViewer, REGIONAL_INCIDENTS_DATA } from './components/MapViewer';
-import { TimeScrubber } from './components/TimeScrubber';
-import { VesselDossierModal } from './components/VesselDossierModal';
-import { ForensicProofModal } from './components/ForensicProofModal';
-import { generateViolationReport as generateViolationReportPDF } from './utils/violationReportPDF';
-import { Form356Modal } from './components/Form356Modal';
 import { LandingPage } from './components/LandingPage';
-import { ForensicsView } from './components/ForensicsView';
-import { ForwardImpactAnalysis } from './components/ForwardImpactAnalysis';
+
+const TelemetryDrawer = React.lazy(() => import('./components/TelemetryDrawer').then(m => ({ default: m.TelemetryDrawer })));
+const TimeScrubber = React.lazy(() => import('./components/TimeScrubber').then(m => ({ default: m.TimeScrubber })));
+const VesselDossierModal = React.lazy(() => import('./components/VesselDossierModal').then(m => ({ default: m.VesselDossierModal })));
+const ForensicProofModal = React.lazy(() => import('./components/ForensicProofModal').then(m => ({ default: m.ForensicProofModal })));
+const Form356Modal = React.lazy(() => import('./components/Form356Modal').then(m => ({ default: m.Form356Modal })));
+const ForensicsView = React.lazy(() => import('./components/ForensicsView').then(m => ({ default: m.ForensicsView })));
+const ForwardImpactAnalysis = React.lazy(() => import('./components/ForwardImpactAnalysis').then(m => ({ default: m.ForwardImpactAnalysis })));
 
 export function App() {
   const [timeUtc, setTimeUtc] = useState('');
@@ -59,8 +59,9 @@ export function App() {
     setTimeOffset(0);
   };
 
-  const handleExportPDF = () => {
-    generateViolationReportPDF();
+  const handleExportPDF = async () => {
+    const { generateViolationReport } = await import('./utils/violationReportPDF');
+    generateViolationReport();
   };
 
   const currentIncident = selectedIncidentId ? REGIONAL_INCIDENTS_DATA[selectedIncidentId] : null;
@@ -70,8 +71,9 @@ export function App() {
   }
 
   return (
-    <div className="w-screen h-screen flex flex-col bg-slate-200/80 overflow-hidden font-sans">
-      {/* === ROW 1: PRIMARY TOP COMMAND HEADER === */}
+    <Suspense fallback={<div className="w-screen h-screen bg-[#020617] flex items-center justify-center text-cyan-400 font-mono text-sm tracking-widest animate-pulse">INITIALIZING SAGAR...</div>}>
+      <div className="w-screen h-screen flex flex-col bg-slate-200/80 overflow-hidden font-sans">
+        {/* === ROW 1: PRIMARY TOP COMMAND HEADER === */}
       <header className="h-14 bg-white border-b border-slate-200 px-6 flex items-center justify-between z-30 shrink-0">
         
         {/* Left: Undistorted Logo, Branding & Case Pill */}
@@ -271,8 +273,9 @@ export function App() {
         <ForensicProofModal onClose={() => setShowProofModal(false)} selectedIncidentId={selectedIncidentId} />
       )}
 
-      {showForm356Modal && <Form356Modal onClose={() => setShowForm356Modal(false)} selectedIncidentId={selectedIncidentId} />}
-    </div>
+        {showForm356Modal && <Form356Modal onClose={() => setShowForm356Modal(false)} selectedIncidentId={selectedIncidentId} />}
+      </div>
+    </Suspense>
   );
 }
 
