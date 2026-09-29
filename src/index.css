@@ -1,0 +1,84 @@
+@import "leaflet/dist/leaflet.css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 1. Prevent Browser Auto Dark Mode */
+:root {
+  color-scheme: light only !important;
+}
+
+html {
+  color-scheme: light only !important;
+  background-color: #f1f5f9 !important;
+  scroll-behavior: smooth !important;
+}
+
+/* 2. Nuclear Force All Backgrounds and Text */
+body,
+#root {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+  filter: none !important;
+}
+
+/* 3. Strip any global invert or dark filters */
+header,
+aside,
+main,
+div,
+section {
+  filter: none !important;
+}
+
+/* 4. Target the specific sidebar and HUD containers directly */
+header {
+  background-color: #ffffff !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+aside {
+  background-color: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08) !important;
+}
+
+aside div {
+  color: #0f172a !important;
+}
+
+aside span,
+aside p {
+  color: inherit;
+}
+
+/* Custom Tooltip Styling */
+.custom-vessel-tooltip.leaflet-tooltip {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+.custom-vessel-tooltip.leaflet-tooltip::before {
+  display: none !important;
+}
+
+.tactical-source-tooltip.leaflet-tooltip {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+.tactical-source-tooltip.leaflet-tooltip::before {
+  display: none !important;
+}
+
+.intercept-warning-tooltip.leaflet-tooltip {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+.intercept-warning-tooltip.leaflet-tooltip::before {
+  display: none !important;
+}
