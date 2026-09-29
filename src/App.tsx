@@ -266,14 +266,22 @@ export function App() {
       )}
 
       {selectedVessel && (
-        <VesselDossierModal onClose={() => setSelectedVessel(null)} vessel={selectedVessel} onExportPDF={handleExportPDF} onOpenForm356={() => setShowForm356Modal(true)} />
+        <Suspense fallback={null}>
+          <VesselDossierModal onClose={() => setSelectedVessel(null)} vessel={selectedVessel} onExportPDF={handleExportPDF} onOpenForm356={() => setShowForm356Modal(true)} />
+        </Suspense>
       )}
 
       {showProofModal && (
-        <ForensicProofModal onClose={() => setShowProofModal(false)} selectedIncidentId={selectedIncidentId} />
+        <Suspense fallback={null}>
+          <ForensicProofModal onClose={() => setShowProofModal(false)} selectedIncidentId={selectedIncidentId} />
+        </Suspense>
       )}
 
-        {showForm356Modal && <Form356Modal onClose={() => setShowForm356Modal(false)} selectedIncidentId={selectedIncidentId} />}
+        {showForm356Modal && (
+          <Suspense fallback={null}>
+            <Form356Modal onClose={() => setShowForm356Modal(false)} selectedIncidentId={selectedIncidentId} />
+          </Suspense>
+        )}
       </div>
     </Suspense>
   );
