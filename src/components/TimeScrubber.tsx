@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { Play, Pause, RotateCcw, FastForward } from 'lucide-react';
+
 
 interface TimeScrubberProps {
   timeOffset: number;
@@ -79,14 +79,7 @@ export const TimeScrubber: React.FC<TimeScrubberProps> = ({
     return () => clearInterval(interval);
   }, [isPlaying, setTimeOffset, setIsPlaying, mode, maxDelta]);
 
-  // Extract base hour from detectionTime (e.g. '10:00 UTC' -> 10)
-  const baseHour = parseInt(detectionTime.split(':')[0]) || 10;
-  const baseMinute = parseInt(detectionTime.split(':')[1]) || 0;
-  
-  const totalMinutes = Math.max(0, Math.round((baseHour * 60 + baseMinute - timeOffset * 60)));
-  const hrs = Math.floor(totalMinutes / 60) % 24;
-  const mins = totalMinutes % 60;
-  const timeStr = `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')} UTC`;
+
 
   return (
     <div className="absolute bottom-6 left-6 right-6 z-[1000] bg-white/95 backdrop-blur-md border border-slate-200 px-4 py-2.5 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] flex flex-col gap-2">

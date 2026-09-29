@@ -8,6 +8,7 @@ interface ForensicsViewProps {
   counterfactualVesselId: string | null;
   onSelectCounterfactual: (id: string | null) => void;
   onSelectVessel: (vessel: any) => void;
+  onOpenProofModal: () => void;
   children?: React.ReactNode;
 }
 
